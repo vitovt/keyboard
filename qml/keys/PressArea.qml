@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.4
+import QtQuick 2.15
 
 import MaliitKeyboard 2.0
 
@@ -38,10 +38,23 @@ MultiPointTouchArea {
     // point.startY, as this always reports 0 for mouse interaction 
     // (https://bugreports.qt.io/browse/QTBUG-41692)
     property real startY
+    property bool hovered: false
 
     property bool acceptDoubleClick: false
     maximumTouchPoints: 1
 
+
+    HoverHandler {
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.Stylus
+        onActiveChanged: root.hovered = active
+        onHoveredChanged: root.hovered = hovered
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: root.hovered ? "pink" : "transparent"
+        opacity: 0.1
+    }
     /// Same as MouseArea pressAndHold()
     signal pressAndHold()
 
