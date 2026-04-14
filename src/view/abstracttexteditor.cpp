@@ -643,6 +643,14 @@ void AbstractTextEditor::onKeyReleased(const Key &key)
         event_key = Qt::Key_End;
         break;
 
+    case Key::ActionPageUp:
+        event_key = Qt::Key_PageUp;
+        break;
+
+    case Key::ActionPageDown:
+        event_key = Qt::Key_PageDown;
+        break;
+
     default:
         break;
     }

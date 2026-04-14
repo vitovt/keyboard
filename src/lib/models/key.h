@@ -72,6 +72,8 @@ public:
         ActionRightLayout, //!< Switch to right/next language layout.
         ActionHome, //!< Key moves cursor to beginning of text.
         ActionEnd, //!< Key moves cursor to end of text.
+        ActionPageUp, //!< Key moves cursor one page up.
+        ActionPageDown, //!< Key moves cursor one page down.
         NumActions
     };
 

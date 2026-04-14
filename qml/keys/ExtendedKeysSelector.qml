@@ -35,6 +35,20 @@ KeyPopover {
 
     property string __commitStr: ""
 
+    function entryText(entry) {
+        if (entry && typeof entry === "object" && entry.label !== undefined) {
+            return entry.label
+        }
+        return entry
+    }
+
+    function entryAction(entry) {
+        if (entry && typeof entry === "object" && entry.action !== undefined) {
+            return entry.action
+        }
+        return ""
+    }
+
     onExtendedKeysModelChanged: {
         if (extendedKeysModel && extendedKeysModel.length > 1) {
             // Reset columns to length, to avoid having weird positioning
@@ -64,8 +78,9 @@ KeyPopover {
         // Calculate font size based on longest key
         if (extendedKeysModel != null) {
             for(var i = 0; i < extendedKeysModel.length; i++) {
-                if (extendedKeysModel[i].length > longestKey) {
-                    longestKey = extendedKeysModel[i].length;
+                var entryText = popover.entryText(extendedKeysModel[i]);
+                if (entryText.length > longestKey) {
+                    longestKey = entryText.length;
                 }
             }
             fontSize = (fullScreenItem.landscape ? (panel.keyHeight / 2) : (panel.keyHeight / 2.8))
@@ -150,7 +165,7 @@ KeyPopover {
                 Label {
                     id: textCell
                     anchors.centerIn: parent;
-                    text: modelData
+                    text: popover.entryText(modelData)
                     font.pixelSize: fontSize
                     font.weight: Font.Light
                     color: key.highlight ? textArea.selectionColor : textArea.color
@@ -158,8 +173,10 @@ KeyPopover {
 
                 function commit(skipAutoCaps) {
                     key.highlight = false;
-                    event_handler.onKeyPressed(modelData);
-                    event_handler.onKeyReleased(modelData);
+                    var action = popover.entryAction(modelData);
+                    var text = popover.entryText(modelData);
+                    event_handler.onKeyPressed(text, action);
+                    event_handler.onKeyReleased(text, action);
                     if (panel.autoCapsTriggered) {
                         panel.autoCapsTriggered = false;
                     } else if (!skipAutoCaps) {

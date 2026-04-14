@@ -101,6 +101,10 @@ void EventHandler::onKeyReleased(QString label, QString action)
         key.setAction(Key::ActionHome);
     else if (action == QLatin1String("end"))
         key.setAction(Key::ActionEnd);
+    else if (action == QLatin1String("pageup"))
+        key.setAction(Key::ActionPageUp);
+    else if (action == QLatin1String("pagedown"))
+        key.setAction(Key::ActionPageDown);
     else if (action == "keysequence") {
         key.setCommandSequence(label);
         key.setAction(Key::ActionKeySequence);

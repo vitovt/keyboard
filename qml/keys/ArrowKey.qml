@@ -20,6 +20,7 @@ ActionKey {
     property string direction: "left"
 
     width: panel.keyWidth * 0.6
+    annotation: "\u00a0"
 
     label: {
         switch (direction) {
@@ -34,6 +35,19 @@ ActionKey {
         }
     }
     shifted: label
+    extended: {
+        switch (direction) {
+        case "up":
+            return [{ label: "PgUp", action: "pageup" }]
+        case "down":
+            return [{ label: "PgDown", action: "pagedown" }]
+        case "right":
+            return [{ label: "End", action: "end" }]
+        default:
+            return [{ label: "Home", action: "home" }]
+        }
+    }
+    extendedShifted: extended
 
     action: direction
 }
