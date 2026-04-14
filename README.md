@@ -1,47 +1,80 @@
-Robust Maliit Keyboard with crash fixes
-=======================================
+Maliit Keyboard Community Fork
+==============================
 
-This project is co‑authored by Qwen (mostly) and Gemini as the code reviewer.
-However, this is not *vibe coding* in any sense. Here is my workflow with the AIs:
+This repository is still **Maliit Keyboard**: the original virtual keyboard for
+Linux systems with Wayland and X11, implemented as a plug-in for the Maliit
+Framework.
 
-1. AI analyze existing code
-2. AI summarize its understanding
-3. I verify or correct that understanding
-4. I define the requirements or the bug
-5. AI implements the solution
-6. I get another AI (in this case Gemini) to review the changes, and I repeat this step back and forth several times
-7. Finally, I make the final decision
+The purpose of this fork is not to replace Maliit with a different project
+identity, but to keep `maliit/keyboard` usable by collecting compatible fixes
+and improvements that were previously scattered across multiple community forks.
 
-However, if this AI‑assisted workflow isn’t something you’re comfortable with, you’re welcome to skip it.
+Maliit Keyboard evolved from the
+[reference keyboard plug-in](https://github.com/maliit/plugins),
+[Ubuntu Keyboard](https://launchpad.net/ubuntu-keyboard) and
+[Lomiri Keyboard](https://github.com/maliit/keyboard/pull/60). Ubuntu Keyboard
+was a fork of the reference plugin which was taking into account the special
+UI/UX needs of Ubuntu Phone.
 
-To install this package on Fedora, run the following commands:
+Why This Fork Exists
+--------------------
 
-```console
-$ sudo dnf copr enable cwt/maliit-keyboard-robust
-$ sudo dnf install maliit-keyboard-robust --allowerasing
-```
+The upstream project has useful fixes spread across several abandoned or
+special-purpose forks, but no single fork contains all of them. This fork
+aggregates the parts that are practical to keep together in one tree.
 
-This package will replace the installed maliit-keyboard so `--allowerasing` is required.
+Changes Relative to Original `maliit/keyboard`
+----------------------------------------------
 
----
+Compared with upstream `maliit/keyboard`, this fork currently adds:
 
-**Above is the ROBUST fork information. Below is the original README content:**
+- crash fixes for keyboard hide/show re-entrancy
+- a fix for the regression where the keyboard does not reappear after hiding
+- reduced VRAM usage while the keyboard is hidden
+- follow-up stability fixes for the hidden-keyboard VRAM work
+- more robust surrounding-text handling
+- tests for surrounding-text overflow protection
+- a small `UpdateNotifier` refactor related to surrounding-text robustness
+- a null check in the `visibleRectChanged` path
+- a fix for the `visibleRectChanged` lambda capture compilation issue
+- a fix for a typo that caused missing backspace and enter icons
+- a fallback so the emoji keyboard still works when QML `LocalStorage` fails
+- key hover highlighting
+- a Plasma 6 system settings URL fix
+- the missing `de-ch` keyboard layout variant
+- English layout navigation arrows
+- long-press arrow extensions for `Home`, `End`, `PgUp`, and `PgDown`
 
----
+Community Sources Incorporated
+------------------------------
 
-Maliit Keyboard
-===============
+The current fork includes work adapted from these community repositories:
 
-Maliit Keyboard is a free software virtual keyboard for Linux systems with Wayland and X11 display servers. It supports many different languages and emoji. It is implemented as a plug-in for Maliit Framework.
+- `cwt/maliit-keyboard-robust`
+  - crash, stability, VRAM, surrounding-text, emoji, and icon fixes
+- `DanielMcInnes/keyboard`
+  - hover feedback for keys
+- `vojtapl/keyboard`
+  - Plasma 6 settings integration fix
+- `mbgevers/keyboard`
+  - missing `de-ch` layout files
+- `snetsplit/keyboard`
+  - navigation-arrow idea, selectively adapted for the English layout
 
-Maliit Keyboard evolved from the [reference keyboard plug-in](https://github.com/maliit/plugins), [Ubuntu Keyboard](https://launchpad.net/ubuntu-keyboard) and [Lomiri Keyboard](https://github.com/maliit/keyboard/pull/60). Ubuntu Keyboard was a fork of the reference plugin which was taking into account the special UI/UX needs of Ubuntu Phone.
+This fork intentionally does not import every change from those repositories.
+Only the parts that fit this tree and are useful here are kept.
 
 License
 -------
+
 The license of the combined work is LGPL-3.0-only.
 
-The majority of individual files in `src` are under a BSD license as written in `COPYING.BSD`.
+The majority of individual files in `src` are under a BSD license as written in
+`COPYING.BSD`.
 
-The majority of individual files in `qml` are under LGPL-3.0-only. New contributions in that directory should be licensed under LGPL-3.0-or-later or aforementioned BSD license.
+The majority of individual files in `qml` are under LGPL-3.0-only. New
+contributions in that directory should be licensed under LGPL-3.0-or-later or
+aforementioned BSD license.
 
-All new code outside the `qml` directory should be licensed as defined in `COPYING.BSD`.
+All new code outside the `qml` directory should be licensed as defined in
+`COPYING.BSD`.
