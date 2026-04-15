@@ -832,9 +832,15 @@ void InputMethod::showSystemSettings()
     auto previous = qgetenv("QT_WAYLAND_SHELL_INTEGRATION");
     qunsetenv("QT_WAYLAND_SHELL_INTEGRATION");
 
-    if (qEnvironmentVariable("PLASMA_PLATFORM").contains(QStringLiteral("phone"))) {
+    const bool plasmaMobile = qEnvironmentVariable("PLASMA_PLATFORM").contains(QStringLiteral("phone"));
+    const bool plasmaDesktop = qEnvironmentVariable("KDE_SESSION_VERSION").contains(QStringLiteral("6"));
+
+    if ((plasmaMobile || plasmaDesktop) &&
+        QDesktopServices::openUrl(QUrl(QStringLiteral("systemsettings://kcm_maliit")))) {
+        // Prefer a dedicated Maliit KCM when it is available.
+    } else if (plasmaMobile) {
         QDesktopServices::openUrl(QUrl("systemsettings://kcm_mobile_onscreenkeyboard"));
-    } else if (qEnvironmentVariable("KDE_SESSION_VERSION").contains(QStringLiteral("6"))) {
+    } else if (plasmaDesktop) {
         QDesktopServices::openUrl(QUrl("systemsettings://kcm_regionandlang"));
     } else {
         QDesktopServices::openUrl(QUrl("settings://system/language"));
