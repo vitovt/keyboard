@@ -121,10 +121,20 @@ install_build_deps_if_requested() {
     fi
 }
 
+normalize_debian_rules_cmake_flags() {
+    local rules_file="$1"
+
+    perl -0pi -e 's/-DCMAKE_BUILD_TYPE=-DCMAKE_BUILD_TYPE=RelWithDebInfo/-DCMAKE_BUILD_TYPE=RelWithDebInfo/g' "$rules_file"
+
+    grep -Fq -- '-DCMAKE_BUILD_TYPE=RelWithDebInfo' "$rules_file" \
+        || fail "Failed to normalize the CMake build type in debian/rules"
+}
+
 set_debian_plasma_kcm_option() {
     local rules_file="$1"
     local enable_flag="$2"
 
+    perl -0pi -e 's/\s-Denable-plasma-kcm=(?:ON|OFF)\b//g' "$rules_file"
     perl -0pi -e 's/-DCMAKE_INSTALL_PREFIX=\/usr\b/-DCMAKE_INSTALL_PREFIX=\/usr -Denable-plasma-kcm='"$enable_flag"'/g' "$rules_file"
 
     grep -Fq -- "-Denable-plasma-kcm=${enable_flag}" "$rules_file" \
@@ -239,6 +249,7 @@ main() {
     apply_local_uk_layout_changes "$uk_qml_file"
 
     log "Configuring Debian build flags"
+    normalize_debian_rules_cmake_flags "${source_tree}/debian/rules"
     set_debian_plasma_kcm_option "${source_tree}/debian/rules" "$([[ "$BUILD_KCM" -eq 1 ]] && printf 'ON' || printf 'OFF')"
     if [[ "$BUILD_KCM" -eq 1 ]]; then
         log "Patching Debian packaging to bundle the Maliit KCM"
