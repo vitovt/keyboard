@@ -89,6 +89,8 @@ void EventHandler::onKeyReleased(QString label, QString action)
         key.setAction(Key::ActionSpace);
     else if (action == QLatin1String("shift"))
         key.setAction(Key::ActionShift);
+    else if (action == QLatin1String("tab"))
+        key.setAction(Key::ActionTab);
     else if (action == QLatin1String("left"))
         key.setAction(Key::ActionLeft);
     else if (action == QLatin1String("right"))

@@ -38,6 +38,186 @@
 
 namespace MaliitKeyboard {
 
+namespace {
+
+constexpr int AllSequenceModifiers = int(Qt::ShiftModifier
+                                         | Qt::ControlModifier
+                                         | Qt::AltModifier
+                                         | Qt::MetaModifier
+                                         | Qt::KeypadModifier);
+
+QKeySequence standardSequenceForAction(const QString &action)
+{
+    if (action == QLatin1String("Copy")) {
+        return QKeySequence(QKeySequence::Copy);
+    }
+    if (action == QLatin1String("Paste")) {
+        return QKeySequence(QKeySequence::Paste);
+    }
+    if (action == QLatin1String("Cut")) {
+        return QKeySequence(QKeySequence::Cut);
+    }
+    if (action == QLatin1String("Redo")) {
+        return QKeySequence(QKeySequence::Redo);
+    }
+    if (action == QLatin1String("Undo")) {
+        return QKeySequence(QKeySequence::Undo);
+    }
+    if (action == QLatin1String("SelectAll")) {
+        return QKeySequence(QKeySequence::SelectAll);
+    }
+    if (action == QLatin1String("SelectNextChar")) {
+        return QKeySequence(QKeySequence::SelectNextChar);
+    }
+    if (action == QLatin1String("SelectPreviousChar")) {
+        return QKeySequence(QKeySequence::SelectPreviousChar);
+    }
+    if (action == QLatin1String("SelectNextLine")) {
+        return QKeySequence(QKeySequence::SelectNextLine);
+    }
+    if (action == QLatin1String("SelectPreviousLine")) {
+        return QKeySequence(QKeySequence::SelectPreviousLine);
+    }
+    if (action == QLatin1String("SelectPreviousWord")) {
+        return QKeySequence(QKeySequence::SelectPreviousWord);
+    }
+    if (action == QLatin1String("SelectNextWord")) {
+        return QKeySequence(QKeySequence::SelectNextWord);
+    }
+    if (action == QLatin1String("SelectStartOfLine")) {
+        return QKeySequence(QKeySequence::SelectStartOfLine);
+    }
+    if (action == QLatin1String("SelectEndOfLine")) {
+        return QKeySequence(QKeySequence::SelectEndOfLine);
+    }
+    if (action == QLatin1String("SelectStartOfDocument")) {
+        return QKeySequence(QKeySequence::SelectStartOfDocument);
+    }
+    if (action == QLatin1String("SelectEndOfDocument")) {
+        return QKeySequence(QKeySequence::SelectEndOfDocument);
+    }
+    if (action == QLatin1String("MoveToNextChar")) {
+        return QKeySequence(QKeySequence::MoveToNextChar);
+    }
+    if (action == QLatin1String("MoveToPreviousChar")) {
+        return QKeySequence(QKeySequence::MoveToPreviousChar);
+    }
+    if (action == QLatin1String("MoveToPreviousWord")) {
+        return QKeySequence(QKeySequence::MoveToPreviousWord);
+    }
+    if (action == QLatin1String("MoveToNextWord")) {
+        return QKeySequence(QKeySequence::MoveToNextWord);
+    }
+    if (action == QLatin1String("MoveToStartOfLine")) {
+        return QKeySequence(QKeySequence::MoveToStartOfLine);
+    }
+    if (action == QLatin1String("MoveToEndOfLine")) {
+        return QKeySequence(QKeySequence::MoveToEndOfLine);
+    }
+    if (action == QLatin1String("MoveToStartOfDocument")) {
+        return QKeySequence(QKeySequence::MoveToStartOfDocument);
+    }
+    if (action == QLatin1String("MoveToEndOfDocument")) {
+        return QKeySequence(QKeySequence::MoveToEndOfDocument);
+    }
+
+    return QKeySequence();
+}
+
+QString normalizePortableKeyToken(QString token)
+{
+    token = token.trimmed();
+
+    if (token.compare(QLatin1String("control"), Qt::CaseInsensitive) == 0) {
+        return QStringLiteral("Ctrl");
+    }
+    if (token.compare(QLatin1String("escape"), Qt::CaseInsensitive) == 0) {
+        return QStringLiteral("Esc");
+    }
+    if (token.compare(QLatin1String("pageup"), Qt::CaseInsensitive) == 0
+        || token.compare(QLatin1String("prior"), Qt::CaseInsensitive) == 0
+        || token.compare(QLatin1String("pgup"), Qt::CaseInsensitive) == 0) {
+        return QStringLiteral("PgUp");
+    }
+    if (token.compare(QLatin1String("pagedown"), Qt::CaseInsensitive) == 0
+        || token.compare(QLatin1String("next"), Qt::CaseInsensitive) == 0
+        || token.compare(QLatin1String("pgdown"), Qt::CaseInsensitive) == 0
+        || token.compare(QLatin1String("pgdn"), Qt::CaseInsensitive) == 0) {
+        return QStringLiteral("PgDown");
+    }
+
+    return token;
+}
+
+QString normalizePortableSequence(const QString &sequence)
+{
+    const QString trimmed = sequence.trimmed();
+    if (trimmed.isEmpty()) {
+        return QString();
+    }
+
+    const QStringList rawTokens = trimmed.split(QLatin1Char('+'), Qt::SkipEmptyParts);
+    QStringList normalizedTokens;
+    normalizedTokens.reserve(rawTokens.size());
+    for (const QString &token : rawTokens) {
+        normalizedTokens.append(normalizePortableKeyToken(token));
+    }
+
+    return normalizedTokens.join(QLatin1Char('+'));
+}
+
+bool hasKnownSequence(const QKeySequence &sequence)
+{
+    if (sequence.count() == 0) {
+        return false;
+    }
+
+    for (int i = 0; i < sequence.count(); ++i) {
+        if (sequence[i] == QKeySequence::UnknownKey) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+QString keyEventTextForSequenceKey(int key, Qt::KeyboardModifiers modifiers)
+{
+    const auto blockingModifiers = Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier;
+    if (modifiers & blockingModifiers) {
+        return QString();
+    }
+
+    switch (key) {
+    case Qt::Key_Tab:
+        return modifiers == Qt::NoModifier ? QStringLiteral("\t") : QString();
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+        return QStringLiteral("\r");
+    case Qt::Key_Space:
+        return QStringLiteral(" ");
+    default:
+        break;
+    }
+
+    if (key >= Qt::Key_A && key <= Qt::Key_Z) {
+        const QChar base = QChar(QLatin1Char('a').unicode() + key - Qt::Key_A);
+        return modifiers & Qt::ShiftModifier ? QString(base.toUpper()) : QString(base);
+    }
+
+    if (key >= Qt::Key_0 && key <= Qt::Key_9 && modifiers == Qt::NoModifier) {
+        return QString(QChar(QLatin1Char('0').unicode() + key - Qt::Key_0));
+    }
+
+    if (key >= Qt::Key_Space && key <= Qt::Key_AsciiTilde) {
+        return QString(QChar(key));
+    }
+
+    return QString();
+}
+
+} // namespace
+
 //! \class EditorOptions
 //! \brief Plain struct implementing editor options.
 
@@ -603,6 +783,11 @@ void AbstractTextEditor::onKeyReleased(const Key &key)
         Q_EMIT keyboardClosed();
         break;
 
+    case Key::ActionTab:
+        event_key = Qt::Key_Tab;
+        keyText = QStringLiteral("\t");
+        break;
+
     case Key::ActionLeft:
         event_key = Qt::Key_Left;
         break;
@@ -620,7 +805,7 @@ void AbstractTextEditor::onKeyReleased(const Key &key)
         break;
         
     case Key::ActionKeySequence:
-        sendKeySequence(text, QKeySequence::fromString(key.commandSequence()));
+        sendKeySequence(text, key.commandSequence());
         break;
         
     case Key::ActionCommand:
@@ -1114,103 +1299,24 @@ void AbstractTextEditor::onKeyboardStateChanged(QString state) {
     d->keyboardState = state;
 }
 
-void AbstractTextEditor::sendKeySequence(const QString &action, const QKeySequence &sequence) {
-
-    static const Qt::KeyboardModifiers AllModifiers = Qt::ShiftModifier | Qt::ControlModifier | Qt::AltModifier
-            | Qt::MetaModifier | Qt::KeypadModifier;
-
-    QKeySequence actionSequence;
-
-    if (action == "Copy") {
-        actionSequence = QKeySequence::Copy;
-    }
-    else if (action == "Paste") {
-        actionSequence = QKeySequence::Paste;
-    }
-    else if (action == "Cut") {
-        actionSequence = QKeySequence::Cut;
-    }
-    else if (action == "Tab") {
-        actionSequence = QKeySequence::AddTab;
-    }
-    else if (action == "Redo") {
-        actionSequence = QKeySequence::Redo;
-    }
-    else if (action == "Undo") {
-        actionSequence = QKeySequence::Undo;
-    }
-    else if (action == "SelectAll") {
-        actionSequence = QKeySequence::SelectAll;
-    }
-    else if (action == "SelectNextChar") {
-        actionSequence = QKeySequence::SelectNextChar;
-    }
-    else if (action == "SelectPreviousChar") {
-        actionSequence = QKeySequence::SelectPreviousChar;
-    }
-    else if (action == "SelectNextLine") {
-        actionSequence = QKeySequence::SelectNextLine;
-    }
-    else if (action == "SelectPreviousLine") {
-        actionSequence = QKeySequence::SelectPreviousLine;
-    }
-    else if (action == "SelectPreviousWord") {
-        actionSequence = QKeySequence::SelectPreviousWord;
-    }
-    else if (action == "SelectNextWord") {
-        actionSequence = QKeySequence::SelectNextWord;
-    }
-    else if (action == "SelectStartOfLine") {
-        actionSequence = QKeySequence::SelectStartOfLine;
-    }
-    else if (action == "SelectEndOfLine") {
-        actionSequence = QKeySequence::SelectEndOfLine;
-    }
-    else if (action == "SelectStartOfDocument") {
-        actionSequence = QKeySequence::SelectStartOfDocument;
-    }
-    else if (action == "SelectEndOfDocument") {
-        actionSequence = QKeySequence::SelectEndOfDocument;
-    }
-    else if (action == "MoveToNextChar") {
-        actionSequence = QKeySequence::MoveToNextChar;
-    }
-    else if (action == "MoveToPreviousChar") {
-        actionSequence = QKeySequence::MoveToPreviousChar;
-    }
-    else if (action == "MoveToPreviousWord") {
-        actionSequence = QKeySequence::MoveToPreviousWord;
-    }
-    else if (action == "MoveToNextWord") {
-        actionSequence = QKeySequence::MoveToNextWord;
-    }
-    else if (action == "MoveToStartOfLine") {
-        actionSequence = QKeySequence::MoveToStartOfLine;
-    }
-    else if (action == "MoveToEndOfLine") {
-        actionSequence = QKeySequence::MoveToEndOfLine;
-    }
-    else if (action == "MoveToStartOfDocument") {
-        actionSequence = QKeySequence::MoveToStartOfDocument;
-    }
-    else if (action == "MoveToEndOfDocument") {
-        actionSequence = QKeySequence::MoveToEndOfDocument;
-    }else{
-        actionSequence = QKeySequence::UnknownKey;
+void AbstractTextEditor::sendKeySequence(const QString &action, const QString &sequence)
+{
+    QKeySequence actionSequence = standardSequenceForAction(action);
+    if (!hasKnownSequence(actionSequence)) {
+        actionSequence = QKeySequence::fromString(normalizePortableSequence(sequence),
+                                                 QKeySequence::PortableText);
     }
 
-    if (actionSequence == QKeySequence::UnknownKey) {
-        actionSequence = sequence;
+    if (!hasKnownSequence(actionSequence)) {
+        qWarning() << "Ignoring unknown key sequence:" << action << sequence;
+        return;
     }
 
-    for (int i = 0; i < actionSequence.count(); i++) {
-        const int key = actionSequence[i] & ~AllModifiers;
-        const int modifiers = actionSequence[i] & AllModifiers;
-        QString text("");
-        if (modifiers == Qt::NoModifier || modifiers == Qt::ShiftModifier) {
-            text = QString(key);
-        }
-        sendKeyPressAndReleaseEvents(key, static_cast<Qt::KeyboardModifiers>(modifiers), text);
+    for (int i = 0; i < actionSequence.count(); ++i) {
+        const int key = actionSequence[i] & ~AllSequenceModifiers;
+        const auto modifiers = static_cast<Qt::KeyboardModifiers>(actionSequence[i] & AllSequenceModifiers);
+        const QString text = keyEventTextForSequenceKey(key, modifiers);
+        sendKeyPressAndReleaseEvents(key, modifiers, text);
     }
 }
 
