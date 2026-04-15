@@ -38,6 +38,7 @@
 #include <QDebug>
 #include <QQuickStyle>
 #include <QDir>
+#include <QStandardPaths>
 
 #include <memory>
 
@@ -232,6 +233,10 @@ public:
         QString prefix = qgetenv("MALIIT_KEYBOARD_LANGUAGES_PATH");
         if (!prefix.isEmpty()) {
             languagesPaths.append(prefix);
+        }
+        const QString configLocation = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+        if (!configLocation.isEmpty()) {
+            languagesPaths.append(QDir(configLocation).filePath(QStringLiteral("maliit/layouts")));
         }
         languagesPaths.append(QStringLiteral(MALIIT_KEYBOARD_LANGUAGES_DIR));
         languagesPaths.append(m_settings.pluginPaths());

@@ -669,7 +669,11 @@ void InputMethod::setActiveLanguage(const QString &newLanguage)
         }
         return;
     }
+    const bool pluginPathChanged = d->currentPluginPath != newPluginPath;
     d->currentPluginPath = newPluginPath;
+    if (pluginPathChanged) {
+        Q_EMIT currentPluginPathChanged(d->currentPluginPath);
+    }
 
     if (d->activeLanguage == newLanguage)
         return;
