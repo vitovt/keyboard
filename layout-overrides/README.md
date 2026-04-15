@@ -113,13 +113,14 @@ Current terminalmax features:
 - one-shot modifier latching
 - modifiers stay active when you leave the `Fn` screen
 - the latched modifier is applied to the next terminal-aware key and then cleared
+- `Esc`, `Tab`, `Home`, `End`, `PgUp`, `PgDown`, and `F1`...`F12` are sent as real key events
 - intended workflows such as `Ctrl+C`, `Ctrl+R`, `Alt+Left`, `Shift+Tab`
 
 Current behavior notes:
 
 - modifier keys stay latched until the next terminal-aware key is sent
-- `F1`...`F12` still use terminal-friendly escape sequences in the no-modifier case
-- this preset is more experimental than `terminal-en`
+- this preset depends on the backend support present in this branch
+- this preset is still more experimental than `terminal-en`
 
 How to activate `terminalmax-en`
 --------------------------------
