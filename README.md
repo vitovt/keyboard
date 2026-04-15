@@ -45,6 +45,7 @@ Compared with upstream `maliit/keyboard`, this fork currently adds:
 - English layout navigation arrows
 - long-press arrow extensions for `Home`, `End`, `PgUp`, and `PgDown`
 - per-user layout overrides from `~/.config/maliit/layouts`
+- an optional Plasma 6 System Settings module for Maliit
 
 Community Sources Incorporated
 ------------------------------
@@ -108,6 +109,46 @@ the original files from your installed Maliit layouts directory, typically:
 
 After adding or changing override files, restart the keyboard or switch away
 from the language and back again so the layout path is re-evaluated.
+
+Plasma 6 System Settings Module
+-------------------------------
+
+This fork also contains an optional Plasma 6 KCM that adds a dedicated
+System Settings page under:
+
+- `Keyboard -> Maliit`
+
+When it is installed, the keyboard's `Settings...` action will prefer that
+page instead of sending you to the generic Plasma language settings.
+
+The KCM is built only when Qt 6 and KDE Frameworks 6 development packages are
+available. If they are missing, the normal Qt 5 Maliit keyboard still builds
+and installs as before, and CMake skips the KCM automatically.
+
+Current options exposed in the Maliit KCM:
+
+- enabled keyboard layouts
+- active/default layout
+- auto-capitalization
+- auto-completion
+- predictive text
+- spell checking
+- double-space full stop
+- key press sound
+- haptic feedback
+- key magnifier
+- opacity
+- device profile (`default` or `tablet`)
+- stay hidden
+- disable height reporting
+
+Settings that still exist in the GSettings schema but are not exposed in the
+KCM yet:
+
+- `keyPressFeedbackSound`
+- `pluginPaths`
+- `theme`
+- `spellCheckingLanguages`
 
 License
 -------
