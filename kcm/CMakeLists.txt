@@ -1,12 +1,30 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
-include(KDEInstallDirs)
+set(QT_MAJOR_VERSION 6)
+include(KDEInstallDirs6)
 
 if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${KDE_INSTALL_PLUGINDIR}")
 endif()
 
+if(DEFINED BUILD_SHARED_LIBS)
+    set(_maliit_kcm_had_build_shared_libs TRUE)
+    set(_maliit_kcm_previous_build_shared_libs "${BUILD_SHARED_LIBS}")
+else()
+    set(_maliit_kcm_had_build_shared_libs FALSE)
+endif()
+
+# System Settings loads KCMs as plugins, so this target must stay loadable
+# even though the main project defaults to static libraries.
+set(BUILD_SHARED_LIBS ON)
 kcmutils_add_qml_kcm(kcm_maliit)
+if(_maliit_kcm_had_build_shared_libs)
+    set(BUILD_SHARED_LIBS "${_maliit_kcm_previous_build_shared_libs}")
+else()
+    unset(BUILD_SHARED_LIBS)
+endif()
+unset(_maliit_kcm_had_build_shared_libs)
+unset(_maliit_kcm_previous_build_shared_libs)
 
 target_sources(kcm_maliit PRIVATE
     maliitkcm.cpp
