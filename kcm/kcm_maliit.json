@@ -1,0 +1,15 @@
+{
+  "KPlugin": {
+    "Description": "Configure Maliit Keyboard",
+    "FormFactors": [
+      "desktop",
+      "tablet",
+      "handset"
+    ],
+    "Icon": "input-keyboard",
+    "License": "BSD-3-Clause",
+    "Name": "Maliit"
+  },
+  "X-KDE-Keywords": "maliit,keyboard,onscreen,osk,virtual keyboard,layout",
+  "X-KDE-System-Settings-Parent-Category": "keyboard"
+}

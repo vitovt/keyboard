@@ -4,6 +4,7 @@ project(maliit-keyboard VERSION 2.3.1)
 
 option(enable-hunspell "Use hunspell for error correction (maliit-keyboard-plugin only)" ON)
 option(enable-tests "Build tests" ON)
+option(enable-plasma-kcm "Build Plasma 6 System Settings module" ON)
 
 # Install paths
 include(GNUInstallDirs)
@@ -34,6 +35,14 @@ find_package(Qt5QuickControls2 REQUIRED)
 find_package(Qt5Multimedia)
 find_package(Qt5Feedback)
 find_package(Intl REQUIRED)
+
+if(enable-plasma-kcm)
+    find_package(Qt6 QUIET COMPONENTS Core Qml Quick)
+    find_package(KF6CoreAddons QUIET)
+    find_package(KF6I18n QUIET)
+    find_package(KF6Config QUIET)
+    find_package(KF6KCMUtils QUIET)
+endif()
 
 find_package(AnthyUnicode)
 find_package(Anthy)
@@ -377,6 +386,16 @@ install(FILES com.github.maliit.keyboard.desktop
         DESTINATION share/applications)
 install(FILES com.github.maliit.keyboard.metainfo.xml
         DESTINATION share/metainfo)
+
+if(enable-plasma-kcm)
+    if(Qt6Core_FOUND AND Qt6Qml_FOUND AND Qt6Quick_FOUND
+       AND KF6CoreAddons_FOUND AND KF6I18n_FOUND
+       AND KF6Config_FOUND AND KF6KCMUtils_FOUND)
+        add_subdirectory(kcm)
+    else()
+        message(STATUS "Skipping Maliit Plasma KCM: missing Qt6/KF6 development packages")
+    endif()
+endif()
 
 # Translations
 add_subdirectory(po)
