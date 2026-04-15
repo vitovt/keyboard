@@ -96,3 +96,45 @@ $ rm ~/.config/maliit/layouts/en/TerminalInsertKey.qml
 
 Then restart the keyboard or switch languages again to return to the packaged
 English layout.
+
+### `terminalmax-en`
+
+Path in this repository:
+
+- `layout-overrides/terminalmax-en/en/`
+
+This preset is an experimental terminal-oriented English layout with a larger
+Fn screen and one-shot modifier support.
+
+Current terminalmax features:
+
+- everything from `terminal-en`
+- `Ctrl`, `Alt`, and `Shift` buttons on the `Fn` screen
+- one-shot modifier latching
+- modifiers stay active when you leave the `Fn` screen
+- the latched modifier is applied to the next terminal-aware key and then cleared
+- intended workflows such as `Ctrl+C`, `Ctrl+R`, `Alt+Left`, `Shift+Tab`
+
+Current behavior notes:
+
+- modifier keys stay latched until the next terminal-aware key is sent
+- `F1`...`F12` still use terminal-friendly escape sequences in the no-modifier case
+- this preset is more experimental than `terminal-en`
+
+How to activate `terminalmax-en`
+--------------------------------
+
+Create the destination directory:
+
+```console
+$ mkdir -p ~/.config/maliit/layouts/en
+```
+
+Copy all files from this preset:
+
+```console
+$ cp layout-overrides/terminalmax-en/en/* ~/.config/maliit/layouts/en/
+```
+
+After copying the files, restart Maliit Keyboard or switch away from English
+and back again so the override path is re-evaluated.
