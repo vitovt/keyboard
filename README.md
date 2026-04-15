@@ -109,6 +109,25 @@ the original files from your installed Maliit layouts directory, typically:
 After adding or changing override files, restart the keyboard or switch away
 from the language and back again so the layout path is re-evaluated.
 
+Ubuntu Build Script
+-------------------
+
+For Ubuntu-based systems such as Ubuntu, Kubuntu, and KDE neon, you do not
+need to clone the whole repository just to build a package.
+
+Download the standalone `build4ubuntu.sh` script from this repository, make it
+executable, and run it. The script downloads the current Debian source package,
+pulls the selected fork branch, builds a `.deb`, and places the resulting
+artifacts in its output directory.
+
+Typical usage:
+
+```console
+$ chmod +x build4ubuntu.sh
+$ ./build4ubuntu.sh --install-build-deps
+$ sudo apt install ./path/to/output/*.deb
+```
+
 License
 -------
 
