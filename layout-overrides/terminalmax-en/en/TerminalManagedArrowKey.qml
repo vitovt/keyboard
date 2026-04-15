@@ -12,19 +12,35 @@ ArrowKey {
     allowPreeditHandler: true
     preeditHandler: Item {
         function onKeyReleased(keyString, action) {
-            var sequenceToken = "Left"
-            switch (direction) {
-            case "up":
-                sequenceToken = "Up"
+            var sequenceToken = ""
+            switch (action) {
+            case "pageup":
+                sequenceToken = "PgUp"
                 break
-            case "down":
-                sequenceToken = "Down"
+            case "pagedown":
+                sequenceToken = "PgDown"
                 break
-            case "right":
-                sequenceToken = "Right"
+            case "home":
+                sequenceToken = "Home"
+                break
+            case "end":
+                sequenceToken = "End"
                 break
             default:
-                break
+                switch (direction) {
+                case "up":
+                    sequenceToken = "Up"
+                    break
+                case "down":
+                    sequenceToken = "Down"
+                    break
+                case "right":
+                    sequenceToken = "Right"
+                    break
+                default:
+                    sequenceToken = "Left"
+                    break
+                }
             }
 
             terminalHandler.onTerminalKeyReleased("", action, sequenceToken)

@@ -298,16 +298,16 @@ KeyPad {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 0
 
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F1"; terminalAction: "terminal-insert"; terminalValue: "\u001bOP"; terminalSequenceToken: "F1" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F2"; terminalAction: "terminal-insert"; terminalValue: "\u001bOQ"; terminalSequenceToken: "F2" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F3"; terminalAction: "terminal-insert"; terminalValue: "\u001bOR"; terminalSequenceToken: "F3" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F4"; terminalAction: "terminal-insert"; terminalValue: "\u001bOS"; terminalSequenceToken: "F4" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F5"; terminalAction: "terminal-insert"; terminalValue: "\u001b[15~"; terminalSequenceToken: "F5" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F6"; terminalAction: "terminal-insert"; terminalValue: "\u001b[17~"; terminalSequenceToken: "F6" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F7"; terminalAction: "terminal-insert"; terminalValue: "\u001b[18~"; terminalSequenceToken: "F7" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F8"; terminalAction: "terminal-insert"; terminalValue: "\u001b[19~"; terminalSequenceToken: "F8" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F9"; terminalAction: "terminal-insert"; terminalValue: "\u001b[20~"; terminalSequenceToken: "F9" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F10"; terminalAction: "terminal-insert"; terminalValue: "\u001b[21~"; terminalSequenceToken: "F10" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F1"; terminalAction: "keysequence"; terminalValue: "F1"; terminalSequenceToken: "F1" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F2"; terminalAction: "keysequence"; terminalValue: "F2"; terminalSequenceToken: "F2" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F3"; terminalAction: "keysequence"; terminalValue: "F3"; terminalSequenceToken: "F3" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F4"; terminalAction: "keysequence"; terminalValue: "F4"; terminalSequenceToken: "F4" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F5"; terminalAction: "keysequence"; terminalValue: "F5"; terminalSequenceToken: "F5" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F6"; terminalAction: "keysequence"; terminalValue: "F6"; terminalSequenceToken: "F6" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F7"; terminalAction: "keysequence"; terminalValue: "F7"; terminalSequenceToken: "F7" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F8"; terminalAction: "keysequence"; terminalValue: "F8"; terminalSequenceToken: "F8" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F9"; terminalAction: "keysequence"; terminalValue: "F9"; terminalSequenceToken: "F9" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F10"; terminalAction: "keysequence"; terminalValue: "F10"; terminalSequenceToken: "F10" }
             }
 
             Row {
@@ -318,11 +318,11 @@ KeyPad {
                 Terminal.TerminalModifierKey { terminalHandler: terminalKeypad; modifierName: "Alt"; active: terminalKeypad.altLatched }
                 Terminal.TerminalModifierKey { terminalHandler: terminalKeypad; modifierName: "Shift"; active: terminalKeypad.shiftLatched }
                 Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "Esc"; terminalAction: "keysequence"; terminalValue: "Esc"; terminalSequenceToken: "Esc" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "Tab"; terminalAction: "terminal-insert"; terminalValue: "\t"; terminalSequenceToken: "Tab" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "|"; terminalAction: "terminal-insert"; terminalValue: "|"; terminalSequenceToken: "|" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "-"; terminalAction: "terminal-insert"; terminalValue: "-"; terminalSequenceToken: "-" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F11"; terminalAction: "terminal-insert"; terminalValue: "\u001b[23~"; terminalSequenceToken: "F11" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F12"; terminalAction: "terminal-insert"; terminalValue: "\u001b[24~"; terminalSequenceToken: "F12" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "Tab"; terminalAction: "keysequence"; terminalValue: "Tab"; terminalSequenceToken: "Tab" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "|"; terminalAction: "keysequence"; terminalValue: "|"; terminalSequenceToken: "|" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "-"; terminalAction: "keysequence"; terminalValue: "-"; terminalSequenceToken: "-" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F11"; terminalAction: "keysequence"; terminalValue: "F11"; terminalSequenceToken: "F11" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "F12"; terminalAction: "keysequence"; terminalValue: "F12"; terminalSequenceToken: "F12" }
             }
 
             Row {
@@ -335,8 +335,8 @@ KeyPad {
                 Terminal.TerminalManagedArrowKey { terminalHandler: terminalKeypad; direction: "down" }
                 Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "Home"; terminalAction: "keysequence"; terminalValue: "Home"; terminalSequenceToken: "Home" }
                 Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "End"; terminalAction: "keysequence"; terminalValue: "End"; terminalSequenceToken: "End" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "PgUp"; terminalAction: "keysequence"; terminalValue: "PageUp"; terminalSequenceToken: "PageUp" }
-                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "PgDn"; terminalAction: "keysequence"; terminalValue: "PageDown"; terminalSequenceToken: "PageDown" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "PgUp"; terminalAction: "keysequence"; terminalValue: "PgUp"; terminalSequenceToken: "PgUp" }
+                Terminal.TerminalManagedKey { terminalHandler: terminalKeypad; label: "PgDn"; terminalAction: "keysequence"; terminalValue: "PgDown"; terminalSequenceToken: "PgDown" }
                 Terminal.TerminalManagedBackspaceKey { terminalHandler: terminalKeypad }
                 Terminal.TerminalManagedReturnKey { terminalHandler: terminalKeypad }
             }
