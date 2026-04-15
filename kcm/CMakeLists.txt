@@ -1,5 +1,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
+include(KDEInstallDirs)
+
+if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${KDE_INSTALL_PLUGINDIR}")
+endif()
+
 kcmutils_add_qml_kcm(kcm_maliit)
 
 target_sources(kcm_maliit PRIVATE

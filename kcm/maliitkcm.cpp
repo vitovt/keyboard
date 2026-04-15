@@ -552,3 +552,5 @@ void MaliitKcm::reloadAvailableLanguages(const QStringList &extraLanguages)
 {
     m_availableLanguages = buildAvailableLanguages(extraLanguages);
 }
+
+#include "maliitkcm.moc"

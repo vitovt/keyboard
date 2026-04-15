@@ -37,6 +37,18 @@ find_package(Qt5Feedback)
 find_package(Intl REQUIRED)
 
 if(enable-plasma-kcm)
+    if(DEFINED QT_DEFAULT_MAJOR_VERSION)
+        set(_maliit_had_qt_default_major_version TRUE)
+        set(_maliit_qt_default_major_version "${QT_DEFAULT_MAJOR_VERSION}")
+    else()
+        set(_maliit_had_qt_default_major_version FALSE)
+    endif()
+
+    set(QT_DEFAULT_MAJOR_VERSION 6)
+    find_package(ECM QUIET NO_MODULE)
+    if(ECM_FOUND)
+        list(PREPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+    endif()
     find_package(Qt6 QUIET COMPONENTS Core Qml Quick)
     find_package(KF6CoreAddons QUIET)
     find_package(KF6I18n QUIET)
@@ -388,13 +400,21 @@ install(FILES com.github.maliit.keyboard.metainfo.xml
         DESTINATION share/metainfo)
 
 if(enable-plasma-kcm)
-    if(Qt6Core_FOUND AND Qt6Qml_FOUND AND Qt6Quick_FOUND
+    if(ECM_FOUND AND Qt6Core_FOUND AND Qt6Qml_FOUND AND Qt6Quick_FOUND
        AND KF6CoreAddons_FOUND AND KF6I18n_FOUND
        AND KF6Config_FOUND AND KF6KCMUtils_FOUND)
         add_subdirectory(kcm)
     else()
-        message(STATUS "Skipping Maliit Plasma KCM: missing Qt6/KF6 development packages")
+        message(STATUS "Skipping Maliit Plasma KCM: missing Qt6/KF6/ECM development packages")
     endif()
+
+    if(_maliit_had_qt_default_major_version)
+        set(QT_DEFAULT_MAJOR_VERSION "${_maliit_qt_default_major_version}")
+    else()
+        unset(QT_DEFAULT_MAJOR_VERSION)
+    endif()
+    unset(_maliit_had_qt_default_major_version)
+    unset(_maliit_qt_default_major_version)
 endif()
 
 # Translations
