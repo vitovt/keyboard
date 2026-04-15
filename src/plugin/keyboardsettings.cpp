@@ -133,6 +133,11 @@ bool KeyboardSettings::autoCapitalization() const
     return m_settings->get(AUTO_CAPITALIZATION_KEY).toBool();
 }
 
+void KeyboardSettings::setAutoCapitalization(bool enabled)
+{
+    m_settings->set(AUTO_CAPITALIZATION_KEY, enabled);
+}
+
 /*!
  * \brief KeyboardSettings::autoCompletion returns true if the current word should
  * be completed with first suggestion when hitting space
@@ -141,6 +146,11 @@ bool KeyboardSettings::autoCapitalization() const
 bool KeyboardSettings::autoCompletion() const
 {
     return m_settings->get(AUTO_COMPLETION_KEY).toBool();
+}
+
+void KeyboardSettings::setAutoCompletion(bool enabled)
+{
+    m_settings->set(AUTO_COMPLETION_KEY, enabled);
 }
 
 /*!
@@ -153,6 +163,11 @@ bool KeyboardSettings::predictiveText() const
     return m_settings->get(PREDICTIVE_TEXT_KEY).toBool();
 }
 
+void KeyboardSettings::setPredictiveText(bool enabled)
+{
+    m_settings->set(PREDICTIVE_TEXT_KEY, enabled);
+}
+
 /*!
  * \brief KeyboardSettings::spellchecking returns true if spellchecking should be used
  * \return
@@ -160,6 +175,11 @@ bool KeyboardSettings::predictiveText() const
 bool KeyboardSettings::spellchecking() const
 {
     return m_settings->get(SPELL_CHECKING_KEY).toBool();
+}
+
+void KeyboardSettings::setSpellchecking(bool enabled)
+{
+    m_settings->set(SPELL_CHECKING_KEY, enabled);
 }
 
 /*!
@@ -172,6 +192,11 @@ bool KeyboardSettings::keyPressAudioFeedback() const
     return m_settings->get(KEY_PRESS_AUDIO_FEEDBACK_KEY).toBool();
 }
 
+void KeyboardSettings::setKeyPressAudioFeedback(bool enabled)
+{
+    m_settings->set(KEY_PRESS_AUDIO_FEEDBACK_KEY, enabled);
+}
+
 /*!
  * \brief KeyboardSettings::keyPressHapticFeedback returns true if haptic feedback is enabled
  * when the user presses a keyboad key
@@ -180,6 +205,11 @@ bool KeyboardSettings::keyPressAudioFeedback() const
 bool KeyboardSettings::keyPressHapticFeedback() const
 {
     return m_settings->get(KEY_PRESS_HAPTIC_FEEDBACK_KEY).toBool();
+}
+
+void KeyboardSettings::setKeyPressHapticFeedback(bool enabled)
+{
+    m_settings->set(KEY_PRESS_HAPTIC_FEEDBACK_KEY, enabled);
 }
 
 /*!
@@ -192,6 +222,11 @@ bool KeyboardSettings::enableMagnifier() const
     return m_settings->get(ENABLE_MAGNIFIER_KEY).toBool();
 }
 
+void KeyboardSettings::setEnableMagnifier(bool enabled)
+{
+    m_settings->set(ENABLE_MAGNIFIER_KEY, enabled);
+}
+
 /*!
  * \brief KeyboardSettings::keyPressFeedbackSound returns the path to the current key
  * feedback sound
@@ -200,6 +235,11 @@ bool KeyboardSettings::enableMagnifier() const
 QString KeyboardSettings::keyPressAudioFeedbackSound() const
 {
     return m_settings->get(KEY_PRESS_AUDIO_FEEDBACK_SOUND_KEY).toString();
+}
+
+void KeyboardSettings::setKeyPressAudioFeedbackSound(const QString& sound)
+{
+    m_settings->set(KEY_PRESS_AUDIO_FEEDBACK_SOUND_KEY, sound);
 }
 
 /*!
@@ -211,6 +251,11 @@ bool KeyboardSettings::doubleSpaceFullStop() const
     return m_settings->get(DOUBLE_SPACE_FULL_STOP_KEY).toBool();
 }
 
+void KeyboardSettings::setDoubleSpaceFullStop(bool enabled)
+{
+    m_settings->set(DOUBLE_SPACE_FULL_STOP_KEY, enabled);
+}
+
 /*!
  * \brief KeyboardSettings:stayHidden returns true if the keyboard should
  * always remain hidden (e.g. if a hardware keyboard has been connected).
@@ -218,6 +263,11 @@ bool KeyboardSettings::doubleSpaceFullStop() const
 bool KeyboardSettings::stayHidden() const
 {
     return m_settings->get(STAY_HIDDEN_KEY).toBool();
+}
+
+void KeyboardSettings::setStayHidden(bool enabled)
+{
+    m_settings->set(STAY_HIDDEN_KEY, enabled);
 }
 
 /*!
@@ -229,9 +279,19 @@ QStringList KeyboardSettings::pluginPaths() const
     return m_settings->get(PLUGIN_PATHS_KEY).toStringList();
 }
 
+void KeyboardSettings::setPluginPaths(const QStringList& paths)
+{
+    m_settings->set(PLUGIN_PATHS_KEY, paths);
+}
+
 bool KeyboardSettings::disableHeight() const
 {
     return m_settings->get(DISABLE_HEIGHT_KEY).toBool();
+}
+
+void KeyboardSettings::setDisableHeight(bool enabled)
+{
+    m_settings->set(DISABLE_HEIGHT_KEY, enabled);
 }
 
 /*!
@@ -243,6 +303,11 @@ double KeyboardSettings::opacity() const
     return m_settings->get(OPACITY_KEY).toDouble();
 }
 
+void KeyboardSettings::setOpacity(double value)
+{
+    m_settings->set(OPACITY_KEY, value);
+}
+
 /*!
  * \brief KeyboardSettings::theme returns the current theme of the
  * on-screen keyboard
@@ -251,6 +316,11 @@ double KeyboardSettings::opacity() const
 QString KeyboardSettings::theme() const
 {
     return m_settings->get(THEME_KEY).toString();
+}
+
+void KeyboardSettings::setTheme(const QString& themeName)
+{
+    m_settings->set(THEME_KEY, themeName);
 }
 
 /*!
@@ -317,4 +387,9 @@ void KeyboardSettings::settingUpdated(const QString &key)
 QString KeyboardSettings::device() const
 {
     return m_settings->get("device").toString();
+}
+
+void KeyboardSettings::setDevice(const QString& deviceName)
+{
+    m_settings->set("device", deviceName);
 }

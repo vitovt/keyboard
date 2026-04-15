@@ -50,20 +50,35 @@ public:
     void setEnabledLanguages(const QStringList& ids);
     void resetEnabledLanguages();
     bool autoCapitalization() const;
+    void setAutoCapitalization(bool enabled);
     bool autoCompletion() const;
+    void setAutoCompletion(bool enabled);
     bool predictiveText() const;
+    void setPredictiveText(bool enabled);
     bool spellchecking() const;
+    void setSpellchecking(bool enabled);
     bool keyPressAudioFeedback() const;
+    void setKeyPressAudioFeedback(bool enabled);
     QString keyPressAudioFeedbackSound() const;
+    void setKeyPressAudioFeedbackSound(const QString& sound);
     bool keyPressHapticFeedback() const;
+    void setKeyPressHapticFeedback(bool enabled);
     bool enableMagnifier() const;
+    void setEnableMagnifier(bool enabled);
     bool doubleSpaceFullStop() const;
+    void setDoubleSpaceFullStop(bool enabled);
     bool stayHidden() const;
+    void setStayHidden(bool enabled);
     bool disableHeight() const;
+    void setDisableHeight(bool enabled);
     QStringList pluginPaths() const;
+    void setPluginPaths(const QStringList& paths);
     double opacity() const;
+    void setOpacity(double value);
     QString theme() const;
+    void setTheme(const QString& themeName);
     QString device() const;
+    void setDevice(const QString& deviceName);
 
 Q_SIGNALS:
     void activeLanguageChanged(QString);
