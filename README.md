@@ -44,6 +44,7 @@ Compared with upstream `maliit/keyboard`, this fork currently adds:
 - the missing `de-ch` keyboard layout variant
 - English layout navigation arrows
 - long-press arrow extensions for `Home`, `End`, `PgUp`, and `PgDown`
+- per-user layout overrides from `~/.config/maliit/layouts`
 
 Community Sources Incorporated
 ------------------------------
@@ -63,6 +64,50 @@ The current fork includes work adapted from these community repositories:
 
 This fork intentionally does not import every change from those repositories.
 Only the parts that fit this tree and are useful here are kept.
+
+User Layout Overrides
+---------------------
+
+This fork also looks for per-user layout overrides in:
+
+- `~/.config/maliit/layouts`
+
+That directory is checked before the built-in system layout directory, so a user
+layout can override an existing layout without rebuilding or reinstalling the
+package.
+
+Expected directory structure:
+
+```text
+~/.config/maliit/layouts/
+└── en/
+    ├── Keyboard_en.qml
+    ├── Keyboard_en_email.qml
+    └── Keyboard_en_url_search.qml
+```
+
+Only the QML layout files need to be overridden there. The compiled language
+plugin can still come from the system installation.
+
+Example: override the normal English layout from the source tree:
+
+```console
+$ mkdir -p ~/.config/maliit/layouts/en
+$ cp plugins/en/qml/Keyboard_en.qml ~/.config/maliit/layouts/en/
+```
+
+If you want to adjust the email or URL variants too, copy the corresponding
+files from `plugins/en/qml/`.
+
+If you are working from an installed package instead of this source tree, copy
+the original files from your installed Maliit layouts directory, typically:
+
+```text
+<libdir>/maliit/keyboard2/languages/<lang>/
+```
+
+After adding or changing override files, restart the keyboard or switch away
+from the language and back again so the layout path is re-evaluated.
 
 License
 -------
