@@ -10,6 +10,7 @@ FORK_URL="https://github.com/vitovt/keyboard.git"
 DEFAULT_BUILD_ROOT="${HOME}/build/maliit-vitovt"
 INSTALL_BUILD_DEPS=0
 BUILD_ROOT=""
+REUSE_BUILD_ID=""
 
 usage() {
     cat <<'EOF'
@@ -22,6 +23,14 @@ current source package in apt repositories.
 Options:
   --build-root PATH         Directory for all build artifacts.
                             Default: ~/build/maliit-vitovt
+  --reuse BUILD_ID          Reuse an existing build session directory instead
+                            of creating a new build-YYYYMMDD-HHMMSS directory.
+                            BUILD_ID is the final directory name, for example:
+                            build-20260429-190621
+                            Existing apt source/debian packaging and source
+                            git checkout are reused when possible. If the
+                            source tree already has FORK_URL as its git origin,
+                            the script updates it instead of cloning again.
   --install-build-deps      Run sudo apt-get build-dep -y maliit-keyboard
   -h, --help                Show this help
 
@@ -53,6 +62,11 @@ parse_args() {
             --install-build-deps)
                 INSTALL_BUILD_DEPS=1
                 shift
+                ;;
+            --reuse)
+                (($# >= 2)) || fail "Missing value for --reuse"
+                REUSE_BUILD_ID="$2"
+                shift 2
                 ;;
             -h|--help)
                 usage
@@ -89,6 +103,60 @@ download_source_package() {
     apt-get source "$PACKAGE_NAME=$source_version"
 }
 
+restore_debian_packaging() {
+    local source_tree="$1"
+    local debian_cache="$2"
+
+    [[ -d "$debian_cache" ]] || fail "Expected cached Debian packaging not found: $debian_cache"
+
+    rm -rf "${source_tree}/debian"
+    cp -a "$debian_cache" "${source_tree}/debian"
+}
+
+update_or_clone_source_tree() {
+    local clone_url="$1"
+    local fork_ref="$2"
+    local source_tree="$3"
+
+    if [[ -d "${source_tree}/.git" ]]; then
+        local current_url
+        local target_branch
+        current_url="$(git -C "$source_tree" remote get-url origin)"
+        [[ "$current_url" == "$clone_url" ]] || fail "Cached fork checkout uses a different origin: $current_url"
+
+        log "Updating existing fork checkout"
+        git -C "$source_tree" reset --hard HEAD
+        git -C "$source_tree" fetch --depth 1 origin
+        if [[ -n "$fork_ref" ]]; then
+            target_branch="$fork_ref"
+        else
+            target_branch="$(git -C "$source_tree" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
+            target_branch="${target_branch:-$(git -C "$source_tree" branch --show-current)}"
+            target_branch="${target_branch:-master}"
+        fi
+
+        log "Using fork branch: $target_branch"
+        git -C "$source_tree" show-ref --verify --quiet "refs/remotes/origin/${target_branch}" \
+            || fail "Remote branch not found: origin/${target_branch}"
+        git -C "$source_tree" checkout -B "$target_branch" "origin/$target_branch"
+        git -C "$source_tree" reset --hard "origin/$target_branch"
+        return
+    fi
+
+    if [[ -e "$source_tree" ]]; then
+        log "Replacing non-git source tree with fork checkout"
+        rm -rf "$source_tree"
+    fi
+
+    log "Cloning fork from GitHub"
+    if [[ -n "$fork_ref" ]]; then
+        log "Using fork branch: $fork_ref"
+        git clone --depth 1 --branch "$fork_ref" "$clone_url" "$source_tree"
+    else
+        git clone --depth 1 "$clone_url" "$source_tree"
+    fi
+}
+
 install_build_deps_if_requested() {
     if [[ "$INSTALL_BUILD_DEPS" -eq 1 ]]; then
         log "Installing build dependencies with sudo"
@@ -116,12 +184,15 @@ apply_local_uk_layout_changes() {
     ' "$qml_file"
 
     after_hash="$(sha256sum "$qml_file" | awk '{print $1}')"
-    [[ "$before_hash" != "$after_hash" ]] || fail "Keyboard_uk.qml was not modified. Upstream layout format may have changed."
 
     grep -Fq 'extended: ["5", "ё"]' "$qml_file" || fail "Failed to apply 'ё' change to Keyboard_uk.qml"
     grep -Fq 'extended: ["ъ", "ʼ"]' "$qml_file" || fail "Failed to apply 'ъ' change to Keyboard_uk.qml"
     grep -Fq 'extended: ["ы"]' "$qml_file" || fail "Failed to apply 'ы' change to Keyboard_uk.qml"
     grep -Fq 'extended: ["э"]' "$qml_file" || fail "Failed to apply 'э' change to Keyboard_uk.qml"
+
+    if [[ "$before_hash" == "$after_hash" ]]; then
+        log "Local Ukrainian keyboard layout changes were already present"
+    fi
 }
 
 resolve_fork_source() {
@@ -164,11 +235,16 @@ main() {
     local upstream_version
     upstream_version="${source_version%-*}"
 
-    local build_stamp
-    build_stamp="$(date -u +%Y%m%d-%H%M%S)"
-
     local session_root
-    session_root="${BUILD_ROOT}/build-${build_stamp}"
+    if [[ -n "$REUSE_BUILD_ID" ]]; then
+        [[ "$REUSE_BUILD_ID" != */* ]] || fail "--reuse expects a build directory name, not a path"
+        session_root="${BUILD_ROOT}/${REUSE_BUILD_ID}"
+        log "Reusing build session: $session_root"
+    else
+        local build_stamp
+        build_stamp="$(date -u +%Y%m%d-%H%M%S)"
+        session_root="${BUILD_ROOT}/build-${build_stamp}"
+    fi
 
     local output_dir
     output_dir="${session_root}/output"
@@ -177,39 +253,34 @@ main() {
     cd "$session_root"
 
     install_build_deps_if_requested
-    download_source_package "$source_version"
 
     local source_tree
     source_tree="${session_root}/${PACKAGE_NAME}-${upstream_version}"
-    [[ -d "$source_tree" ]] || fail "Expected extracted source tree not found: $source_tree"
+    local debian_cache
+    debian_cache="${session_root}/debian.base"
+    if [[ -d "$source_tree" ]]; then
+        log "Using existing source tree: $source_tree"
+        if [[ ! -d "$debian_cache" ]]; then
+            [[ -d "${source_tree}/debian" ]] || fail "Existing source tree has no debian directory: $source_tree"
+            cp -a "${source_tree}/debian" "$debian_cache"
+        fi
+    else
+        download_source_package "$source_version"
+        [[ -d "$source_tree" ]] || fail "Expected extracted source tree not found: $source_tree"
+        cp -a "${source_tree}/debian" "$debian_cache"
+    fi
 
-    local saved_debian_dir
-    saved_debian_dir="${session_root}/debian.saved"
-    mv "${source_tree}/debian" "$saved_debian_dir"
-
-    local fork_dir
-    fork_dir="${session_root}/maliit-keyboard-vitovt"
     local fork_clone_url
     local fork_ref
     mapfile -t fork_source < <(resolve_fork_source "$FORK_URL")
     fork_clone_url="${fork_source[0]}"
     fork_ref="${fork_source[1]}"
 
-    log "Cloning fork from GitHub"
-    if [[ -n "$fork_ref" ]]; then
-        log "Using fork branch: $fork_ref"
-        git clone --depth 1 --branch "$fork_ref" "$fork_clone_url" "$fork_dir"
-    else
-        git clone --depth 1 "$fork_clone_url" "$fork_dir"
-    fi
+    update_or_clone_source_tree "$fork_clone_url" "$fork_ref" "$source_tree"
+    restore_debian_packaging "$source_tree" "$debian_cache"
 
     local fork_short_sha
-    fork_short_sha="$(git -C "$fork_dir" rev-parse --short HEAD)"
-
-    rm -rf "$source_tree"
-    mv "$fork_dir" "$source_tree"
-    rm -rf "${source_tree}/.git"
-    mv "$saved_debian_dir" "${source_tree}/debian"
+    fork_short_sha="$(git -C "$source_tree" rev-parse --short HEAD)"
 
     local uk_qml_file
     uk_qml_file="$(find "$source_tree" -type f -name 'Keyboard_uk.qml' -print -quit)"
