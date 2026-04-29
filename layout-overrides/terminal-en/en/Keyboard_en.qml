@@ -4,7 +4,7 @@
  * This is the current working preset for terminal use:
  * - normal symbols still use the standard symbols page
  * - Fn is a local in-layout toggle, not a new content type
- * - Ctrl/Alt are intentionally omitted until backend modifier support exists
+ * - Ctrl is a one-shot terminal control key for letters
  * - Tab and F1-F12 are sent as terminal-friendly text/control sequences
  */
 
@@ -24,8 +24,33 @@ KeyPad {
     symbols: "languages/Keyboard_symbols.qml"
 
     property bool terminalFnEnabled: false
+    property bool ctrlLatched: false
 
-    onTerminalFnEnabledChanged: panel.activeKeypadState = "NORMAL"
+    onTerminalFnEnabledChanged: {
+        panel.activeKeypadState = "NORMAL";
+        ctrlLatched = false;
+    }
+
+    function controlTextForLetter(letter) {
+        var code = letter.toLowerCase().charCodeAt(0);
+        if (code < 97 || code > 122)
+            return "";
+
+        return String.fromCharCode(code - 96);
+    }
+
+    function onKeyReleased(keyToSend, action) {
+        if (ctrlLatched) {
+            var controlText = controlTextForLetter(keyToSend);
+            ctrlLatched = false;
+            if (controlText.length > 0) {
+                event_handler.onKeyReleased(controlText, "");
+                return;
+            }
+        }
+
+        event_handler.onKeyReleased(keyToSend, action);
+    }
 
     Item {
         id: contentRoot
@@ -47,47 +72,61 @@ KeyPad {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 0
 
-                CharKey { label: "q"; shifted: "Q"; extended: ["1"]; extendedShifted: ["1"]; leftSide: true; }
-                CharKey { label: "w"; shifted: "W"; extended: ["2"]; extendedShifted: ["2"] }
-                CharKey { label: "e"; shifted: "E"; extended: ["3", "è", "é", "ê", "ë", "€"]; extendedShifted: ["3", "È", "É", "Ê", "Ë", "€"] }
-                CharKey { label: "r"; shifted: "R"; extended: ["4"]; extendedShifted: ["4"] }
-                CharKey { label: "t"; shifted: "T"; extended: ["5", "þ"]; extendedShifted: ["5", "Þ"] }
-                CharKey { label: "y"; shifted: "Y"; extended: ["6", "ý", "¥"]; extendedShifted: ["6", "Ý", "¥"] }
-                CharKey { label: "u"; shifted: "U"; extended: ["7", "û", "ù", "ú", "ü"]; extendedShifted: ["7", "Û", "Ù", "Ú", "Ü"] }
-                CharKey { label: "i"; shifted: "I"; extended: ["8", "î", "ï", "ì", "í"]; extendedShifted: ["8", "Î", "Ï", "Ì", "Í"] }
-                CharKey { label: "o"; shifted: "O"; extended: ["9", "ö", "ô", "ò", "ó"]; extendedShifted: ["9", "Ö", "Ô", "Ò", "Ó"] }
-                CharKey { label: "p"; shifted: "P"; extended: ["0"]; extendedShifted: ["0"]; rightSide: true; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "q"; shifted: "Q"; extended: ["1"]; extendedShifted: ["1"]; leftSide: true; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "w"; shifted: "W"; extended: ["2"]; extendedShifted: ["2"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "e"; shifted: "E"; extended: ["3", "è", "é", "ê", "ë", "€"]; extendedShifted: ["3", "È", "É", "Ê", "Ë", "€"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "r"; shifted: "R"; extended: ["4"]; extendedShifted: ["4"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "t"; shifted: "T"; extended: ["5", "þ"]; extendedShifted: ["5", "Þ"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "y"; shifted: "Y"; extended: ["6", "ý", "¥"]; extendedShifted: ["6", "Ý", "¥"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "u"; shifted: "U"; extended: ["7", "û", "ù", "ú", "ü"]; extendedShifted: ["7", "Û", "Ù", "Ú", "Ü"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "i"; shifted: "I"; extended: ["8", "î", "ï", "ì", "í"]; extendedShifted: ["8", "Î", "Ï", "Ì", "Í"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "o"; shifted: "O"; extended: ["9", "ö", "ô", "ò", "ó"]; extendedShifted: ["9", "Ö", "Ô", "Ò", "Ó"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "p"; shifted: "P"; extended: ["0"]; extendedShifted: ["0"]; rightSide: true; }
             }
 
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 0
 
-                CharKey { label: "a"; shifted: "A"; extended: ["ä", "à", "â", "ª", "á", "å", "æ"]; extendedShifted: ["Ä", "À", "Â", "ª", "Á", "Å", "Æ"]; leftSide: true; }
-                CharKey { label: "s"; shifted: "S"; extended: ["ß", "$"]; extendedShifted: ["$"] }
-                CharKey { label: "d"; shifted: "D"; extended: ["ð"]; extendedShifted: ["Ð"] }
-                CharKey { label: "f"; shifted: "F"; }
-                CharKey { label: "g"; shifted: "G"; }
-                CharKey { label: "h"; shifted: "H"; }
-                CharKey { label: "j"; shifted: "J"; }
-                CharKey { label: "k"; shifted: "K"; }
-                CharKey { label: "l"; shifted: "L"; rightSide: true; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "a"; shifted: "A"; extended: ["ä", "à", "â", "ª", "á", "å", "æ"]; extendedShifted: ["Ä", "À", "Â", "ª", "Á", "Å", "Æ"]; leftSide: true; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "s"; shifted: "S"; extended: ["ß", "$"]; extendedShifted: ["$"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "d"; shifted: "D"; extended: ["ð"]; extendedShifted: ["Ð"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "f"; shifted: "F"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "g"; shifted: "G"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "h"; shifted: "H"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "j"; shifted: "J"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "k"; shifted: "K"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "l"; shifted: "L"; rightSide: true; }
             }
 
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 0
 
-                ShiftKey {}
-                CharKey { label: "z"; shifted: "Z"; }
-                CharKey { label: "x"; shifted: "X"; }
-                CharKey { label: "c"; shifted: "C"; extended: ["ç"]; extendedShifted: ["Ç"] }
-                CharKey { label: "v"; shifted: "V"; }
-                CharKey { label: "b"; shifted: "B"; }
-                CharKey { label: "n"; shifted: "N"; extended: ["ñ"]; extendedShifted: ["Ñ"] }
-                CharKey { label: "m"; shifted: "M"; }
+                ShiftKey { width: panel.keyWidth * 0.85 }
+                ActionKey {
+                    label: terminalKeypad.ctrlLatched ? "Ctrl*" : "Ctrl"
+                    shifted: label
+                    width: panel.keyWidth * 0.9
+                    noMagnifier: true
+                    skipAutoCaps: true
+                    overridePressArea: true
+                    textCenterOffset: 0
+
+                    onPressed: {
+                        Feedback.keyPressed();
+                        terminalKeypad.ctrlLatched = !terminalKeypad.ctrlLatched;
+                    }
+                }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "z"; shifted: "Z"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "x"; shifted: "X"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "c"; shifted: "C"; extended: ["ç"]; extendedShifted: ["Ç"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "v"; shifted: "V"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "b"; shifted: "B"; }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "n"; shifted: "N"; extended: ["ñ"]; extendedShifted: ["Ñ"] }
+                Terminal.TerminalCtrlCharKey { terminalHandler: terminalKeypad; label: "m"; shifted: "M"; }
                 ArrowKey { direction: "up"; }
-                BackspaceKey {}
+                BackspaceKey { width: panel.keyWidth * 0.9 }
             }
 
             Item {

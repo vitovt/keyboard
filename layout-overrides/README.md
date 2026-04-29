@@ -48,14 +48,18 @@ Current terminal-oriented features:
 - direct arrow keys on the main English layout
 - language switching on the main layout
 - local `Fn` toggle inside the layout
+- one-shot `Ctrl` key on the main layout for terminal control-letter
+  shortcuts such as `Ctrl+C`, `Ctrl+R`, and `Ctrl+D`
 - `Fn` screen with `F1` through `F12` sent as xterm-style escape sequences
 - `Esc`, `Tab`, `Home`, `End`, `PgUp`, and `PgDown`
 - terminal-friendly `|` and `-` on the `Fn` screen
 
 Current limitation:
 
-- `Ctrl` and `Alt` are intentionally omitted for now
-- the current backend still needs extra work for universal modifier support
+- `Ctrl` is intentionally limited to one-shot letter combinations for
+  terminal workflows
+- `Alt` and universal graphical shortcut modifiers are intentionally omitted
+  for now
 
 How to activate `terminal-en`
 -----------------------------
@@ -70,13 +74,15 @@ Copy all files from this preset:
 
 ```console
 $ cp layout-overrides/terminal-en/en/Keyboard_en.qml ~/.config/maliit/layouts/en/
+$ cp layout-overrides/terminal-en/en/TerminalCtrlCharKey.qml ~/.config/maliit/layouts/en/
 $ cp layout-overrides/terminal-en/en/TerminalSequenceKey.qml ~/.config/maliit/layouts/en/
 $ cp layout-overrides/terminal-en/en/TerminalInsertKey.qml ~/.config/maliit/layouts/en/
 ```
 
-Why all three files are needed:
+Why all four files are needed:
 
 - `Keyboard_en.qml` is the actual override layout
+- `TerminalCtrlCharKey.qml` is used for one-shot terminal `Ctrl` letter shortcuts
 - `TerminalSequenceKey.qml` is used for working special keys such as `Esc`
 - `TerminalInsertKey.qml` is used for terminal text/control sequences such as `Tab` and `F1`...`F12`
 
@@ -90,6 +96,7 @@ Remove the copied override files:
 
 ```console
 $ rm ~/.config/maliit/layouts/en/Keyboard_en.qml
+$ rm ~/.config/maliit/layouts/en/TerminalCtrlCharKey.qml
 $ rm ~/.config/maliit/layouts/en/TerminalSequenceKey.qml
 $ rm ~/.config/maliit/layouts/en/TerminalInsertKey.qml
 ```
