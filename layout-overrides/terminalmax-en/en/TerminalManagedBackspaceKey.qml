@@ -25,7 +25,9 @@ ActionKey {
 
     onPressed: {
         Feedback.keyPressed()
-        event_handler.onKeyPressed("", "backspace")
+        if (!terminalHandler.hasLatchedModifiers()) {
+            event_handler.onKeyPressed("", "backspace")
+        }
     }
 
     onReleased: {
