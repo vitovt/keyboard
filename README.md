@@ -83,21 +83,39 @@ Expected directory structure:
 └── en/
     ├── Keyboard_en.qml
     ├── Keyboard_en_email.qml
+    ├── Keyboard_en_url.qml
     └── Keyboard_en_url_search.qml
 ```
 
 Only the QML layout files need to be overridden there. The compiled language
 plugin can still come from the system installation.
 
+Important: layout overrides are currently resolved per language directory, not
+per individual file. If `~/.config/maliit/layouts/en` exists, Maliit will use
+that directory as the active English layout directory. Content-specific layouts
+such as email and URL fields are then loaded from the same directory:
+
+```text
+~/.config/maliit/layouts/en/Keyboard_en.qml
+~/.config/maliit/layouts/en/Keyboard_en_email.qml
+~/.config/maliit/layouts/en/Keyboard_en_url_search.qml
+```
+
+There is no fallback to the packaged English email or URL layout when one of
+those files is missing from the override directory. In that case the keyboard
+may show a blank white area for that content type. Phone and number fields are
+different: they use the shared built-in `Keyboard_telephone.qml` and
+`Keyboard_numbers.qml`, so they can continue to work even when the English
+override directory is incomplete.
+
 Example: override the normal English layout from the source tree:
 
 ```console
 $ mkdir -p ~/.config/maliit/layouts/en
-$ cp plugins/en/qml/Keyboard_en.qml ~/.config/maliit/layouts/en/
+$ cp plugins/en/qml/Keyboard_en*.qml ~/.config/maliit/layouts/en/
 ```
 
-If you want to adjust the email or URL variants too, copy the corresponding
-files from `plugins/en/qml/`.
+Then edit only the copied files you want to customize.
 
 If you are working from an installed package instead of this source tree, copy
 the original files from your installed Maliit layouts directory, typically:
