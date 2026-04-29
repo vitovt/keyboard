@@ -25,6 +25,7 @@ ActionKey {
 
     onPressed: {
         Feedback.keyPressed()
+        event_handler.onKeyPressed("", "backspace")
     }
 
     onReleased: {
