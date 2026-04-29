@@ -35,8 +35,33 @@
 
 #include <QElapsedTimer>
 #include <QDebug>
+#include <QClipboard>
+#include <QDBusConnection>
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QGuiApplication>
 
 namespace MaliitKeyboard {
+
+namespace {
+
+QString clipboardTextFromKdeKlipper()
+{
+    QDBusInterface klipper(QStringLiteral("org.kde.klipper"),
+                           QStringLiteral("/klipper"),
+                           QStringLiteral("org.kde.klipper.klipper"),
+                           QDBusConnection::sessionBus());
+    if (klipper.isValid()) {
+        const QDBusReply<QString> reply = klipper.call(QStringLiteral("getClipboardContents"));
+        if (reply.isValid())
+            return reply.value();
+    }
+
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    return clipboard ? clipboard->text(QClipboard::Clipboard) : QString();
+}
+
+} // namespace
 
 //! \class EditorOptions
 //! \brief Plain struct implementing editor options.
@@ -594,6 +619,18 @@ void AbstractTextEditor::onKeyReleased(const Key &key)
 
     case Key::ActionCommit: {
         commitPreedit();
+
+        Q_EMIT preeditChanged(d->text->preedit());
+        Q_EMIT cursorPositionChanged(d->text->cursorPosition());
+    } break;
+
+    case Key::ActionPaste: {
+        commitPreedit();
+        const QString clipboardText = clipboardTextFromKdeKlipper();
+        if (!clipboardText.isEmpty())
+            sendCommitString(clipboardText);
+        else
+            invokeAction(QStringLiteral("Paste"), QKeySequence::Paste);
 
         Q_EMIT preeditChanged(d->text->preedit());
         Q_EMIT cursorPositionChanged(d->text->cursorPosition());

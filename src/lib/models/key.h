@@ -74,6 +74,7 @@ public:
         ActionEnd, //!< Key moves cursor to end of text.
         ActionPageUp, //!< Key moves cursor one page up.
         ActionPageDown, //!< Key moves cursor one page down.
+        ActionPaste, //!< Key inserts the current clipboard text.
         NumActions
     };
 

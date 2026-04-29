@@ -228,6 +228,7 @@ KeyPad {
                 Terminal.TerminalSequenceKey { label: "End";  sequence: "End" }
                 Terminal.TerminalSequenceKey { label: "PgUp"; sequence: "PgUp" }
                 Terminal.TerminalSequenceKey { label: "PgDn"; sequence: "PgDown" }
+                ActionKey { label: "Paste"; shifted: label; action: "paste"; noMagnifier: true; skipAutoCaps: true; textCenterOffset: 0 }
                 Terminal.TerminalInsertKey { label: "Ctrl+C"; submitText: "\u0003" }
 
                 ActionKey {

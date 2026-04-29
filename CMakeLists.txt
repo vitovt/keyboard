@@ -116,7 +116,7 @@ set(MALIIT_KEYBOARD_VIEW_SOURCES
         src/view/setup.h)
 
 add_library(maliit-keyboard-view STATIC ${MALIIT_KEYBOARD_VIEW_SOURCES})
-target_link_libraries(maliit-keyboard-view Maliit::Plugins maliit-keyboard-lib)
+target_link_libraries(maliit-keyboard-view Qt5::DBus Maliit::Plugins maliit-keyboard-lib)
 target_include_directories(maliit-keyboard-view PUBLIC src)
 
 set(QGSETTINGS_SOURCES
