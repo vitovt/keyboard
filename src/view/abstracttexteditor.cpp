@@ -184,6 +184,12 @@ bool hasKnownSequence(const QKeySequence &sequence)
 QString keyEventTextForSequenceKey(int key, Qt::KeyboardModifiers modifiers)
 {
     const auto blockingModifiers = Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier;
+    const auto nonTextModifiers = Qt::AltModifier | Qt::MetaModifier;
+    if ((modifiers & Qt::ControlModifier) && !(modifiers & nonTextModifiers)
+        && key >= Qt::Key_A && key <= Qt::Key_Z) {
+        return QString(QChar(key - Qt::Key_A + 1));
+    }
+
     if (modifiers & blockingModifiers) {
         return QString();
     }
