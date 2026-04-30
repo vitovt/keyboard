@@ -10,10 +10,16 @@ stored here as presets that you can copy into your user override directory:
 - `~/.config/maliit/layouts`
 
 The structure inside each preset mirrors the structure expected by Maliit in
-the user override directory. In practice, that means the inner language
-directories such as `en/` should be copied into:
+the user override directory. In practice, that means the whole inner language
+directory, such as `en/` or `uk/`, should be copied into:
 
 - `~/.config/maliit/layouts/<language>/`
+
+Copy the complete language directory, not individual QML files. Once a
+language directory exists under `~/.config/maliit/layouts`, Maliit resolves the
+layout from that override directory first. If only some files are copied, other
+input contexts such as URL, email, search, or the language plugin may be
+missing and the keyboard can show an empty white layout.
 
 Why this directory exists
 -------------------------
@@ -24,6 +30,7 @@ This `layout-overrides/` directory is for experimental or optional layouts that
 are better kept as user-level overrides:
 
 - terminal-oriented layouts
+- layouts with additional language-specific characters
 - personal workflow layouts
 - layouts that still need runtime testing
 - layouts you may want to enable only on one machine
@@ -64,42 +71,64 @@ Current limitation:
 How to activate `terminal-en`
 -----------------------------
 
-Create the destination directory:
+Copy the whole preset language directory:
 
 ```console
-$ mkdir -p ~/.config/maliit/layouts/en
+$ mkdir -p ~/.config/maliit/layouts
+$ cp -a layout-overrides/terminal-en/en ~/.config/maliit/layouts/
 ```
 
-Copy all files from this preset:
+Do not copy only `Keyboard_en.qml`. This preset also needs helper QML files and
+the language plugin file from the same `en/` directory.
+
+After copying the directory, restart Maliit Keyboard or switch away from
+English and back again so the override path is re-evaluated.
+
+### `ukr-cyrextended`
+
+Path in this repository:
+
+- `layout-overrides/ukr-cyrextended/uk/`
+
+This preset replaces the normal Ukrainian layout with a Ukrainian layout that
+adds extra Cyrillic characters inspired by the "Strange Ukrainian" Windows
+layout.
+
+Additional long-press characters:
+
+- `е`: `ё`
+- `ї`: `ъ`
+- `і`: `ы`
+- `є`: `э`
+
+The existing Ukrainian long-press characters, such as `ґ`, `₴`, and `ʼ`, are
+kept.
+
+How to activate `ukr-cyrextended`
+---------------------------------
+
+Copy the whole preset language directory:
 
 ```console
-$ cp layout-overrides/terminal-en/en/Keyboard_en.qml ~/.config/maliit/layouts/en/
-$ cp layout-overrides/terminal-en/en/TerminalCtrlCharKey.qml ~/.config/maliit/layouts/en/
-$ cp layout-overrides/terminal-en/en/TerminalSequenceKey.qml ~/.config/maliit/layouts/en/
-$ cp layout-overrides/terminal-en/en/TerminalInsertKey.qml ~/.config/maliit/layouts/en/
+$ mkdir -p ~/.config/maliit/layouts
+$ cp -a layout-overrides/ukr-cyrextended/uk ~/.config/maliit/layouts/
 ```
 
-Why all four files are needed:
+Do not copy only `Keyboard_uk.qml`. The `uk/` directory must include all
+context-specific layout files and the Ukrainian language plugin file.
 
-- `Keyboard_en.qml` is the actual override layout
-- `TerminalCtrlCharKey.qml` is used for one-shot terminal `Ctrl` letter shortcuts
-- `TerminalSequenceKey.qml` is used for working special keys such as `Esc`
-- `TerminalInsertKey.qml` is used for terminal text/control sequences such as `Tab` and `F1`...`F12`
-
-After copying the files, restart Maliit Keyboard or switch away from English
-and back again so the override path is re-evaluated.
+After copying the directory, restart Maliit Keyboard or switch away from
+Ukrainian and back again so the override path is re-evaluated.
 
 How to disable it again
 -----------------------
 
-Remove the copied override files:
+Remove the copied override directory for the language:
 
 ```console
-$ rm ~/.config/maliit/layouts/en/Keyboard_en.qml
-$ rm ~/.config/maliit/layouts/en/TerminalCtrlCharKey.qml
-$ rm ~/.config/maliit/layouts/en/TerminalSequenceKey.qml
-$ rm ~/.config/maliit/layouts/en/TerminalInsertKey.qml
+$ rm -r ~/.config/maliit/layouts/en
+$ rm -r ~/.config/maliit/layouts/uk
 ```
 
-Then restart the keyboard or switch languages again to return to the packaged
-English layout.
+Remove only the language directory you want to disable. Then restart the
+keyboard or switch languages again to return to the packaged layout.
