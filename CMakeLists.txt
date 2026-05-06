@@ -104,8 +104,14 @@ if(enable-hunspell)
     list(APPEND maliit-keyboard-include-dirs ${Hunspell_INCLUDE_DIRS})
 endif()
 
+add_library(maliit-keyboard-logging STATIC
+        src/logging.cpp
+        src/logging.h)
+target_link_libraries(maliit-keyboard-logging PUBLIC Qt5::Core)
+target_include_directories(maliit-keyboard-logging PUBLIC src)
+
 add_library(maliit-keyboard-lib STATIC ${MALIIT_KEYBOARD_LIB_SOURCES})
-target_link_libraries(maliit-keyboard-lib Qt5::Core Maliit::Plugins)
+target_link_libraries(maliit-keyboard-lib Qt5::Core Maliit::Plugins maliit-keyboard-logging)
 target_include_directories(maliit-keyboard-lib PUBLIC src src/lib)
 target_compile_definitions(maliit-keyboard-lib PRIVATE ${maliit-keyboard-definitions})
 
@@ -134,8 +140,6 @@ target_include_directories(gsettings-qt PUBLIC ${GIO_INCLUDE_DIRS} src/3rdparty)
 target_compile_definitions(gsettings-qt PRIVATE -DQT_NO_KEYWORDS)
 
 set(MALIIT_KEYBOARD_COMMON_SOURCES
-        src/logging.cpp
-        src/logging.h
         src/plugin/editor.cpp
         src/plugin/editor.h
         src/plugin/feedback.cpp
@@ -155,7 +159,7 @@ set(MALIIT_KEYBOARD_COMMON_SOURCES
         src/plugin/device.h)
 
 add_library(maliit-keyboard-common STATIC ${MALIIT_KEYBOARD_COMMON_SOURCES})
-target_link_libraries(maliit-keyboard-common Qt5::DBus Qt5::QuickControls2 Maliit::Plugins maliit-keyboard-lib maliit-keyboard-view gsettings-qt Qt5::Multimedia ${Intl_LIBRARIES})
+target_link_libraries(maliit-keyboard-common Qt5::DBus Qt5::QuickControls2 Maliit::Plugins maliit-keyboard-lib maliit-keyboard-view gsettings-qt Qt5::Multimedia maliit-keyboard-logging ${Intl_LIBRARIES})
 target_include_directories(maliit-keyboard-common PUBLIC src)
 if (Qt5Feedback_FOUND)
     target_link_libraries(maliit-keyboard-common Qt5::Feedback)
@@ -185,7 +189,7 @@ target_compile_definitions(maliit-keyboard PRIVATE ${maliit-keyboard-definitions
 # TODO install westernlanguagesplugin.h into "$${MALIIT_PLUGINS_DATA_DIR}/com/ubuntu/include"
 
 add_library(westernsupport STATIC ${WESTERNSUPPORT_SOURCES})
-target_link_libraries(westernsupport ${maliit-keyboard-libraries} Maliit::Plugins)
+target_link_libraries(westernsupport ${maliit-keyboard-libraries} Maliit::Plugins maliit-keyboard-logging)
 target_include_directories(westernsupport PUBLIC src src/lib/logic plugins/westernsupport ${maliit-keyboard-include-dirs})
 target_compile_definitions(westernsupport PRIVATE ${maliit-keyboard-definitions})
 
