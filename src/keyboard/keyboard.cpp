@@ -28,9 +28,21 @@
 #include <maliit/standaloneinputmethod.h>
 #include <src/plugin/plugin.h>
 
+namespace {
+
+void setDefaultLoggingRules()
+{
+    if (!qEnvironmentVariableIsSet("QT_LOGGING_RULES")) {
+        qputenv("QT_LOGGING_RULES", "maliit.connection.wayland.debug=false");
+    }
+}
+
+} // namespace
+
 int main(int argc, char **argv) {
     setenv("QT_IM_MODULE", "none", true);
     setenv("QT_WAYLAND_SHELL_INTEGRATION", "inputpanel-shell", true);
+    setDefaultLoggingRules();
 
     QGuiApplication app(argc, argv);
 

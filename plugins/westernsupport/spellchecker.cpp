@@ -31,6 +31,7 @@
  */
 
 #include "spellchecker.h"
+#include "logging.h"
 
 #ifdef HAVE_HUNSPELL
 #include "hunspell/hunspell.hxx"
@@ -283,7 +284,9 @@ bool SpellChecker::setLanguage(const QString &language)
 {
     Q_D(SpellChecker);
 
-    qDebug() << "spellechecker.cpp in setLanguage() lang=" << language << "dictPath=" << dictPath();
+    qCDebug(maliitKeyboardSpellcheckLog) << "Setting spellcheck language"
+                                         << language
+                                         << "dictPath=" << dictPath();
 
     QDir dictDir(dictPath());
     QStringList affMatches = dictDir.entryList(QStringList(language+"*.aff"));
@@ -306,7 +309,10 @@ bool SpellChecker::setLanguage(const QString &language)
     d->dic_file = dictPath() + QDir::separator() + dicMatches[0];
     d->user_dictionary_file = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QDir::separator() + language + "_userDictionary.dic";
 
-    qDebug() << "spellechecker.cpp in setLanguage() aff_file=" << d->aff_file << "dic_file=" << d->dic_file << "user dictionary=" << d->user_dictionary_file;
+    qCDebug(maliitKeyboardSpellcheckLog) << "Using spellcheck files"
+                                         << "aff_file=" << d->aff_file
+                                         << "dic_file=" << d->dic_file
+                                         << "user dictionary=" << d->user_dictionary_file;
 
     if (enabled()) {
         setEnabled(false);

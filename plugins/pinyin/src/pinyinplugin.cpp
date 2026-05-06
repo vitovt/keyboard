@@ -1,5 +1,6 @@
 #include "pinyinplugin.h"
 #include "chineselanguagefeatures.h"
+#include "logging.h"
 
 #include <QDebug>
 
@@ -38,7 +39,7 @@ void PinyinPlugin::predict(const QString& surroundingLeft, const QString& preedi
 
 void PinyinPlugin::wordCandidateSelected(QString word)
 {
-    qDebug() << "Pinyin plugin: selecting word " << word;
+    qCDebug(maliitKeyboardWordEngineLog) << "Pinyin plugin selecting word" << word;
     Q_EMIT candidateSelected(word);
 }
 

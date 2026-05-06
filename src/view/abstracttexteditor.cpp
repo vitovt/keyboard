@@ -30,6 +30,7 @@
  */
 
 #include "abstracttexteditor.h"
+#include "logging.h"
 #include "models/wordribbon.h"
 #include "logic/abstractlanguagefeatures.h"
 
@@ -838,7 +839,7 @@ void AbstractTextEditor::clearPreedit()
         return;
     }
 
-    qDebug() << "in clear preedit.. clearing word engine";
+    qCDebug(maliitKeyboardWordEngineLog) << "Clearing preedit and word engine";
     d->word_engine->clearCandidates();
 }
 

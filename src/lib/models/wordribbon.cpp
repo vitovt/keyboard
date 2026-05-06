@@ -30,6 +30,7 @@
  */
 
 #include "wordribbon.h"
+#include "logging.h"
 
 namespace MaliitKeyboard {
 
@@ -179,7 +180,7 @@ void WordRibbon::onWordCandidateReleased(const WordCandidate &candidate)
 
 void WordRibbon::onWordCandidatesChanged(const WordCandidateList &candidates)
 {
-    qDebug() << "word ribbon: candidates changed";
+    qCDebug(maliitKeyboardWordRibbonLog) << "Candidates changed";
     clearCandidates();
 
     for (int index = 0; index < candidates.count(); ++index) {

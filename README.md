@@ -127,6 +127,32 @@ the original files from your installed Maliit layouts directory, typically:
 After adding or changing override files, restart the keyboard or switch away
 from the language and back again so the layout path is re-evaluated.
 
+Debug Logging
+-------------
+
+Runtime debug logging follows the standard Qt/KDE logging-category mechanism.
+Warnings and errors remain visible by default, while Maliit Keyboard debug
+categories are quiet unless explicitly enabled.
+
+The standalone `maliit-keyboard` executable also disables the noisy
+`maliit.connection.wayland.debug` framework category by default when
+`QT_LOGGING_RULES` is not already set.
+
+To enable all Maliit Keyboard debug logs for one run:
+
+```console
+$ QT_LOGGING_RULES='maliit.keyboard.*.debug=true;maliit.pinyin.debug=true;maliit.connection.wayland.debug=true' maliit-keyboard
+```
+
+To enable one category:
+
+```console
+$ QT_LOGGING_RULES='maliit.keyboard.inputmethod.debug=true' maliit-keyboard
+```
+
+Installed packages also provide a `maliit-keyboard.categories` file for KDE
+debug tooling such as `kdebugsettings`.
+
 Ubuntu Build Script
 -------------------
 

@@ -29,6 +29,7 @@
  */
 
 #include "abstractwordengine.h"
+#include "logging.h"
 
 namespace MaliitKeyboard {
 namespace Logic {
@@ -160,20 +161,20 @@ void AbstractWordEngine::addToUserDictionary(const QString &word)
 void AbstractWordEngine::setWordPredictionEnabled(bool on)
 {
     Q_UNUSED(on);
-    qDebug() << Q_FUNC_INFO << "should be implemented by inherited class";
+    qCDebug(maliitKeyboardWordEngineLog) << Q_FUNC_INFO << "should be implemented by inherited class";
 }
 
 //!
 void AbstractWordEngine::setSpellcheckerEnabled(bool on)
 {
     Q_UNUSED(on);
-    qDebug() << Q_FUNC_INFO << "should be implemented by inherited class";
+    qCDebug(maliitKeyboardWordEngineLog) << Q_FUNC_INFO << "should be implemented by inherited class";
 }
 
 void AbstractWordEngine::setAutoCorrectEnabled(bool on)
 {
     Q_UNUSED(on);
-    qDebug() << Q_FUNC_INFO << "should be implemented by inherited class";
+    qCDebug(maliitKeyboardWordEngineLog) << Q_FUNC_INFO << "should be implemented by inherited class";
 }
 
 /*

@@ -34,7 +34,7 @@
 
 namespace
 {
-    Q_LOGGING_CATEGORY(Pinyin, "maliit.pinyin")
+    Q_LOGGING_CATEGORY(Pinyin, "maliit.pinyin", QtWarningMsg)
 }
 
 PinyinAdapter::PinyinAdapter(QObject *parent) :

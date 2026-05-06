@@ -31,6 +31,7 @@
 
 #include "inputmethod.h"
 #include "inputmethod_p.h"
+#include "logging.h"
 
 #include "models/key.h"
 #include "models/keyarea.h"
@@ -204,7 +205,7 @@ void InputMethod::reset()
 {
     //this gets called from Qt when the focused editor changes
     //we need to clear preedit/word candidates in this case
-    qDebug() << "inputMethod::reset()";
+    qCDebug(maliitKeyboardInputMethodLog) << "Resetting input method";
     Q_D(InputMethod);
     d->editor.clearPreedit();
     d->previous_position = -1;
@@ -647,7 +648,7 @@ void InputMethod::setActiveLanguage(const QString &newLanguage)
 {
     Q_D(InputMethod);
 
-    qDebug() << "in inputMethod.cpp setActiveLanguage() activeLanguage is:" << newLanguage;
+    qCDebug(maliitKeyboardInputMethodLog) << "Setting active language to" << newLanguage;
 
     QString newPluginPath;
     foreach(QString pluginPath, d->languagesPaths) {
@@ -684,7 +685,7 @@ void InputMethod::setActiveLanguage(const QString &newLanguage)
     d->host->setLanguage(newLanguage);
     d->m_settings.setActiveLanguage(newLanguage);
 
-    qDebug() << "in inputMethod.cpp setActiveLanguage() emitting activeLanguageChanged to" << d->activeLanguage;
+    qCDebug(maliitKeyboardInputMethodLog) << "Emitting activeLanguageChanged for" << d->activeLanguage;
     Q_EMIT activeLanguageChanged(d->activeLanguage);
 }
 
@@ -731,12 +732,8 @@ void InputMethod::onVisibleRectChanged()
         inputMethodHost()->setInputMethodArea(visibleRect, nullptr);
     }
 
-    qDebug() << "keyboard is reporting <x y w h>: <"
-                << visibleRect.x()
-                << visibleRect.y()
-                << visibleRect.width()
-                << visibleRect.height()
-                << "> to the app manager.";
+    qCDebug(maliitKeyboardLayoutLog) << "Reporting keyboard area to the app manager:"
+                                     << visibleRect;
 
 }
 

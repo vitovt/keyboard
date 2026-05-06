@@ -1,0 +1,9 @@
+# KDebugSettings data file
+
+maliit.keyboard.inputmethod Maliit Keyboard input method DEFAULT_SEVERITY [WARNING] IDENTIFIER [maliitKeyboardInputMethodLog]
+maliit.keyboard.layout Maliit Keyboard layout and geometry DEFAULT_SEVERITY [WARNING] IDENTIFIER [maliitKeyboardLayoutLog]
+maliit.keyboard.plugin Maliit Keyboard plugin loading DEFAULT_SEVERITY [WARNING] IDENTIFIER [maliitKeyboardPluginLog]
+maliit.keyboard.spellcheck Maliit Keyboard spell checking DEFAULT_SEVERITY [WARNING] IDENTIFIER [maliitKeyboardSpellcheckLog]
+maliit.keyboard.wordengine Maliit Keyboard word engine DEFAULT_SEVERITY [WARNING] IDENTIFIER [maliitKeyboardWordEngineLog]
+maliit.keyboard.wordribbon Maliit Keyboard word ribbon DEFAULT_SEVERITY [WARNING] IDENTIFIER [maliitKeyboardWordRibbonLog]
+maliit.pinyin Maliit Keyboard Pinyin plugin DEFAULT_SEVERITY [WARNING] IDENTIFIER [Pinyin]

@@ -21,6 +21,7 @@
 #include "editor.h"
 #include "feedback.h"
 #include "gettext.h"
+#include "logging.h"
 
 #include "keyboardgeometry.h"
 #include "keyboardsettings.h"
@@ -299,7 +300,7 @@ public:
                          q, &InputMethod::setActiveLanguage);
 
         activeLanguage = m_settings.activeLanguage();
-        qDebug() << "inputmethod_p.h registerActiveLanguage(): activeLanguage is:" << activeLanguage;
+        qCDebug(maliitKeyboardInputMethodLog) << "Registering active language" << activeLanguage;
         q->setActiveLanguage(activeLanguage);
     }
 

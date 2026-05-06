@@ -30,6 +30,7 @@
  */
 
 #include "wordengine.h"
+#include "logging.h"
 #include "abstractlanguageplugin.h"
 
 namespace MaliitKeyboard {
@@ -101,7 +102,7 @@ public:
                 if (pluginPath != DEFAULT_PLUGIN)
                     loadPlugin(DEFAULT_PLUGIN);
             } else {
-                qDebug() << "wordengine.cpp plugin" << pluginPath << "loaded";
+                qCDebug(maliitKeyboardPluginLog) << "Loaded language plugin" << pluginPath;
                 currentPlugin = pluginPath;
             }
         } else {
